@@ -14,7 +14,6 @@ import keybinder
 
 import windows
 
-screen_resolution = windows.get_screen_resolution()
 CONFIG = {
         'hotkey': '<Ctrl><Alt>D',
         'exit_hotkey': 'Escape',
@@ -22,8 +21,6 @@ CONFIG = {
         'canvas_scale': 0.2,
         'columns': 8,
         'rows': 8,
-        'usable_screen_width': screen_resolution[0],
-        'usable_screen_height': screen_resolution[1],
         'left_screen_margin': 0,
         'top_screen_margin': 0,
         'right_padding': 0,
@@ -88,8 +85,8 @@ class RationApp:
         self.canvas.connect('button-press-event', self.canvas_button_press)
         self.canvas.connect('button-release-event', self.canvas_button_release)
 
-        width = math.floor(CONFIG['usable_screen_width'] * CONFIG['canvas_scale'] / CONFIG['columns']) * CONFIG['columns'] + 1
-        height = math.floor(CONFIG['usable_screen_height'] * CONFIG['canvas_scale'] / CONFIG['rows']) * CONFIG['rows'] + 1
+        width = math.floor(windows.get_screen_resolution()[0] * CONFIG['canvas_scale'] / CONFIG['columns']) * CONFIG['columns'] + 1
+        height = math.floor(windows.get_screen_resolution()[1] * CONFIG['canvas_scale'] / CONFIG['rows']) * CONFIG['rows'] + 1
 
         self.setup_status_icon()
 
@@ -261,13 +258,13 @@ class RationApp:
         """
         Translate the selection size to the actual screen size a window should be resized too.
         """
-        self.new_window_size = (self.selected_boxes[0] * CONFIG['usable_screen_width'] / CONFIG['columns']
+        self.new_window_size = (self.selected_boxes[0] * windows.get_screen_resolution()[0] / CONFIG['columns']
                                     + CONFIG['left_screen_margin'],
-                                self.selected_boxes[1] * CONFIG['usable_screen_height'] / CONFIG['rows']
+                                self.selected_boxes[1] * windows.get_screen_resolution()[1] / CONFIG['rows']
                                     + CONFIG['top_screen_margin'],
-                                (self.selected_boxes[2] - self.selected_boxes[0]) * CONFIG['usable_screen_width'] / CONFIG['columns']
+                                (self.selected_boxes[2] - self.selected_boxes[0]) * windows.get_screen_resolution()[0] / CONFIG['columns']
                                     - CONFIG['right_padding'],
-                                (self.selected_boxes[3] - self.selected_boxes[1]) * CONFIG['usable_screen_height'] / CONFIG['rows']
+                                (self.selected_boxes[3] - self.selected_boxes[1]) * windows.get_screen_resolution()[1] / CONFIG['rows']
                                     - CONFIG['bottom_padding'])
 
     def clear_buffer(self):
@@ -358,6 +355,7 @@ class RationApp:
         """
         keybinder.unbind(CONFIG['hotkey'])
         keybinder.unbind('Escape')
+
 
 if __name__ == '__main__':
     app = RationApp()
